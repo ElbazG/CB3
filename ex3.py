@@ -23,6 +23,24 @@ def convert_to_matrix(matrix):
     return new_matrix
 
 
+def train_network():
+    # Train the network
+    W = np.zeros((pattern_width * pattern_height, pattern_width * pattern_height))
+
+    for i in range(pattern_width * pattern_height):
+        for j in range(pattern_width * pattern_height):
+            if i == j or W[i, j] != 0.0:
+                continue
+
+            w = 0.0
+
+            for n in range(nb_patterns):
+                w += patterns[n, i] * patterns[n, j]
+
+            W[i, j] = w / patterns.shape[0]
+            W[j, i] = W[i, j]
+
+
 if __name__ == '__main__':
     zero_matrix = zero()
     test = convert_to_matrix(zero_matrix[0])
