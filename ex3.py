@@ -10,7 +10,7 @@ def zero():
         matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
     a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
     matrices = np.array(a)
-    print(matrices[0])
+    return matrices[0]
 
 
 def show_matrix(num_list):
