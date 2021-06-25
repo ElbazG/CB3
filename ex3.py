@@ -106,7 +106,24 @@ def random_line(matrix):
     return matrix
 
 
-def train_network():
+def create():
+    zero_matrix = zero()
+    one_matrix = one()
+    two_matrix = two()
+    three_matrix = three()
+    four_matrix = four()
+    five_matrix = five()
+    six_matrix = six()
+    seven_matrix = seven()
+    eight_matrix = eight()
+    nine_matrix = nine()
+    arr = [zero_matrix[0], one_matrix[0], two_matrix[0], three_matrix[0], four_matrix[0], five_matrix[0]
+        , six_matrix[0], seven_matrix[0], eight_matrix[0], nine_matrix[0]]
+    arr = np.array(arr)
+    return arr
+
+
+def train_network(matrix_array):
     # Train the network
     W = np.zeros((N * N, N * N))
 
@@ -118,13 +135,14 @@ def train_network():
             w = 0.0
 
             for n in range(nb_patterns):
-                w += patterns[n, i] * patterns[n, j]
+                w += matrix_array[n, i] * matrix_array[n, j]
 
-            W[i, j] = w / patterns.shape[0]
+            W[i, j] = w / matrix_array.shape[0]
             W[j, i] = W[i, j]
+    return W
 
 
 if __name__ == '__main__':
-    zero_matrix = zero()
-    test = convert_to_matrix(zero_matrix[0])
-    show_matrix(test)
+    only_one = create()
+    weight = train_network(only_one)
+    print(weight)
