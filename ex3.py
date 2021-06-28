@@ -4,6 +4,7 @@ import random
 
 N = 10
 nb_patterns = 10
+max_iterations = 10
 
 
 def zero():
@@ -106,6 +107,7 @@ def random_line(matrix):
     return matrix
 
 
+# Create an array of one matrix for each number as arrays
 def create():
     zero_matrix = zero()
     one_matrix = one()
@@ -117,8 +119,8 @@ def create():
     seven_matrix = seven()
     eight_matrix = eight()
     nine_matrix = nine()
-    arr = [zero_matrix[0], one_matrix[0], two_matrix[0], three_matrix[0], four_matrix[0], five_matrix[0]
-        , six_matrix[0], seven_matrix[0], eight_matrix[0], nine_matrix[0]]
+    arr = [zero_matrix, one_matrix, two_matrix, three_matrix, four_matrix, five_matrix
+        , six_matrix, seven_matrix, eight_matrix, nine_matrix]
     arr = np.array(arr)
     return arr
 
@@ -142,7 +144,29 @@ def train_network(matrix_array):
     return W
 
 
+def construct(weight_matrix):
+    patterns = create()
+    S = random_line(patterns)
+    h = np.zeros((N * N))
+    # Defining Hamming Distance matrix for seeing convergence
+    hamming_distance = np.zeros((max_iterations, nb_patterns))
+    for iteration in range(max_iterations):
+        for i in range(N * N):
+            i = np.random.randint(N * N)
+            h[i] = 0
+            for j in range(N * N):
+                h[i] += weight_matrix[i, j] * S[i,j]
+            S = np.where(h < 1, 0, 1)
+        for i in range(nb_patterns):
+            hamming_distance[iteration, i] = ((patterns - S)[i] != 0).sum()
+
+        fig, ax = plt.subplots()
+        ax.matshow(S.reshape((N, N)), cmap='gray')
+    return hamming_distance
+
+
 if __name__ == '__main__':
-    only_one = create()
-    weight = train_network(only_one)
-    print(weight)
+    each = create()
+    trained = train_network(each)
+    hamming = construct(trained)
+    print(hamming)
