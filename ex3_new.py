@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-value = 0
+value = -1
 
 
 # Print the matrix image
@@ -10,6 +10,7 @@ def show_matrix(matrix):
     plt.show()
 
 
+# Train neural network
 def train_network(matrix):
     values = []
     for i in range(100):
@@ -26,6 +27,7 @@ def train_network(matrix):
     return np.array(values)
 
 
+# Try to recover the learned pattern
 def recover(matrix, t_mat):
     original_matrix = np.copy(matrix)
     worked_matrix = np.copy(matrix)
@@ -47,11 +49,12 @@ def recover(matrix, t_mat):
                 worked_matrix[h_vector[sample]] = value
             if recovery != worked_matrix[h_vector[sample]]:
                 sign = True
-    # show_matrix(original_matrix.reshape(10, 10))
-    # show_matrix(worked_matrix.reshape(10, 10))
+    show_matrix(original_matrix.reshape(10, 10))
+    show_matrix(worked_matrix.reshape(10, 10))
     return worked_matrix
 
 
+# Randomize the data
 def randomize(matrix, rate):
     matrix_list = []
     for _ in range(10):
@@ -69,6 +72,7 @@ def randomize(matrix, rate):
     return matrix_list
 
 
+# Read the input file
 with open("numbers.txt", 'r') as data_file:
     data = []
     holder = []
@@ -97,7 +101,7 @@ trained_matrix = []
 for m in data_base:
     trained_matrix.append(train_network(m))
 
-# calculate variations:
+# Core of the code - try to reconstruct
 scores = []
 for rate in range(5, 51, 5):
     mutated_data = randomize(data[0].reshape(100), rate)
@@ -116,12 +120,14 @@ for rate in range(5, 51, 5):
         nums_scores.append(sum_n_avg)
     scores.append(nums_scores)
 
+"""
+# Plotting using matplob lib
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 colors = ['olive', 'yellow', 'olivedrab', 'yellowgreen', 'darkolivegreen', 'greenyellow',
           'chartreuse', 'lawngreen', 'darkseagreen', 'palegreen']
-markers = ['8','s','p','P','*',"+","X","D","x","|"]
+markers = ['8', 's', 'p', 'P', '*', "+", "X", "D", "x", "|"]
 
 for i in range(len(colors)):
     ax.scatter(0, 0, 0, color=colors[i], marker='.', label=i + 1)
@@ -138,3 +144,4 @@ ax.set_ylabel('Change Rate')
 ax.set_zlabel('Difference')
 plt.legend(bbox_to_anchor=(1.5, 1), loc='best')
 plt.show()
+"""
