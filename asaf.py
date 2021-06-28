@@ -129,26 +129,3 @@ for rate in range(5, 51, 5):
         nums_scores.append(sum_n_avg)
     scores.append(nums_scores)
 
-fig = plt.figure()
-ax = plt.axes(pro)
-
-colors = ["purple", "blue", "turquoise", "lime", "greenyellow", "yellow", "khaki", "orange", "orangered", "red"]
-markers = ['o', 'v', '<', '>', '^', 's', 'p', '*', 'h', 'X']
-
-for i in range(len(colors)):
-    ax.scatter(0, 0, 0, color=colors[i], marker='.', label=i+1)
-
-for i in range(len(markers)):
-    ax.scatter(0, 0, 0, color='k', marker=markers[i], label=(i + 1)*5)
-
-for ratio in range(len(scores)):
-    for number in range(len(scores[ratio])):
-        ax.scatter(number, (ratio + 1) * 5, scores[ratio][number], color=colors[number], marker=markers[ratio])
-
-
-ax.set_xlabel('Number Learned')
-ax.set_ylabel('Mutation Ratio')
-ax.set_zlabel('Euclidean Distance')
-plt.legend(bbox_to_anchor=(1, 1), loc='best')
-plt.show()
-

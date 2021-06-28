@@ -93,7 +93,6 @@ for d in data:
         data_base.append(np.array(matrix_data))
         matrix_data = []
 
-
 trained_matrix = []
 for m in data_base:
     trained_matrix.append(train_network(m))
@@ -118,5 +117,24 @@ for rate in range(5, 51, 5):
     scores.append(nums_scores)
 
 fig = plt.figure()
-ax = plt.axes(projection='3d')
+ax = fig.add_subplot(111, projection='3d')
+
+colors = ['olive', 'yellow', 'olivedrab', 'yellowgreen', 'darkolivegreen', 'greenyellow',
+          'chartreuse', 'lawngreen', 'darkseagreen', 'palegreen']
+markers = ['8','s','p','P','*',"+","X","D","x","|"]
+
+for i in range(len(colors)):
+    ax.scatter(0, 0, 0, color=colors[i], marker='.', label=i + 1)
+
+for i in range(len(markers)):
+    ax.scatter(0, 0, 0, color='k', marker=markers[i], label=(i + 1) * 5)
+
+for ratio in range(len(scores)):
+    for number in range(len(scores[ratio])):
+        ax.scatter(number, (ratio + 1) * 10, scores[ratio][number], color=colors[number], marker=markers[ratio])
+
+ax.set_xlabel('Number')
+ax.set_ylabel('Change Rate')
+ax.set_zlabel('Difference')
+plt.legend(bbox_to_anchor=(1.5, 1), loc='best')
 plt.show()
