@@ -19,29 +19,6 @@ def print_matrix(matrix):
     print()
 
 
-def modificate_matrix(matrix, rate):
-    matrix_list = []
-    for _ in range(10):
-        index_array = np.arange(matrix.size)
-        np.random.shuffle(index_array)
-        index_array = index_array[:rate]
-
-        locations_i = []
-        locations_j = []
-        for index in index_array:
-            locations_i.append(int(index / 10))
-            locations_j.append(index % 10)
-
-        mutated_matrix = np.copy(matrix)
-        for m in range(rate):
-            if mutated_matrix[locations_i[m]][locations_j[m]] == 1:
-                mutated_matrix[locations_i[m]][locations_j[m]] = one_opposite
-            else:
-                mutated_matrix[locations_i[m]][locations_j[m]] = 1
-        matrix_list.append(mutated_matrix)
-    return matrix_list
-
-
 def make_T(matrix):
     scores = []
     for cul1 in range(100):
@@ -79,9 +56,9 @@ def reconstruction(matrix, t_mat):
                 after_matrix[bit_order[bit]] = one_opposite
             if memory != after_matrix[bit_order[bit]]:
                 flag = True
-    #return after_matrix
-    print_matrix(before_matrix.reshape(10, 10))
-    print_matrix(after_matrix.reshape(10, 10))
+    return after_matrix
+    #print_matrix(before_matrix.reshape(10, 10))
+    #print_matrix(after_matrix.reshape(10, 10))
 
 
 def modificate_matrix(matrix, rate):
@@ -102,7 +79,7 @@ def modificate_matrix(matrix, rate):
 
 
 # read data:
-data_file = open("data.txt", 'r')
+data_file = open("numbers.txt", 'r')
 data = []
 temp = []
 for line in data_file:
@@ -148,12 +125,12 @@ for rate in range(5, 51, 5):
         for i in range(10):
             recon_matrix = reconstruction(mutated_data[i], t_of_all)
             sum_n_avg = sum_n_avg + np.linalg.norm(data[0].reshape(100) - recon_matrix)
-        sum_n_avg = sum_n_avg / 10
+            sum_n_avg = sum_n_avg / 10
         nums_scores.append(sum_n_avg)
     scores.append(nums_scores)
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+ax = plt.axes(pro)
 
 colors = ["purple", "blue", "turquoise", "lime", "greenyellow", "yellow", "khaki", "orange", "orangered", "red"]
 markers = ['o', 'v', '<', '>', '^', 's', 'p', '*', 'h', 'X']

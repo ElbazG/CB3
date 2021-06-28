@@ -2,171 +2,133 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-N = 10
-nb_patterns = 10
-max_iterations = 10
+value = 0
 
 
-def zero():
-    with open('numbers_matrix/zero_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
+# Read the input data
+def read_data():
+    file = open("numbers.txt", 'r')
+    data = []
+    temp = []
+    for line in file:
+        if line.rstrip() == "":
+            temp = np.array(temp)
+            temp = np.where(temp == 0, value, temp)
+            data.append(temp)
+            temp = []
+        else:
+            temp.append([int(bit) for bit in line.rstrip()])
+    temp = np.array(temp)
+    temp = np.where(temp == 0, value, temp)
+    data.append(temp)
+    file.close()
+    return data
 
 
-def one():
-    with open('numbers_matrix/one_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
 
 
-def two():
-    with open('numbers_matrix/two_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
+def randomize(matrix, rate):
+    matrix_list = []
+    for _ in range(10):
+        index_array = np.arange(matrix.size)
+        np.random.shuffle(index_array)
+        index_array = index_array[:rate]
 
-
-def three():
-    with open('numbers_matrix/three_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def four():
-    with open('numbers_matrix/four_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def five():
-    with open('numbers_matrix/five_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def six():
-    with open('numbers_matrix/six_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def seven():
-    with open('numbers_matrix/seven_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def eight():
-    with open('numbers_matrix/eight_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def nine():
-    with open('numbers_matrix/nine_matrix.txt') as matrices_file:
-        matrices_buffer_list = matrices_file.buffer.read().decode().split("\r\n")
-    a = [[int(ch) for ch in element] for element in [matrix for matrix in matrices_buffer_list]]
-    matrices = np.array(a)
-    return matrices
-
-
-def show_matrix(num_list):
-    plt.imshow(num_list)
-    plt.show()
+        mutated_matrix = np.copy(matrix)
+        for m in range(rate):
+            if mutated_matrix[index_array[m]] == 1:
+                mutated_matrix[index_array[m]] = value
+            else:
+                mutated_matrix[index_array[m]] = 1
+        matrix_list.append(mutated_matrix)
+    return matrix_list
 
 
 def convert_to_matrix(matrix):
-    new_matrix = matrix.reshape(N, N)
+    new_matrix = matrix.reshape(10, 10)
     return new_matrix
 
 
-def random_line(matrix):
-    for i in matrix:
-        num = random.randint(0, 9)
-        if i[num] == 0:
-            i[num] = 1
-        else:
-            i[num] = 0
-    return matrix
-
-
-# Create an array of one matrix for each number as arrays
+# Create the matrix database
 def create():
-    zero_matrix = zero()
-    one_matrix = one()
-    two_matrix = two()
-    three_matrix = three()
-    four_matrix = four()
-    five_matrix = five()
-    six_matrix = six()
-    seven_matrix = seven()
-    eight_matrix = eight()
-    nine_matrix = nine()
-    arr = [zero_matrix, one_matrix, two_matrix, three_matrix, four_matrix, five_matrix
-        , six_matrix, seven_matrix, eight_matrix, nine_matrix]
-    arr = np.array(arr)
-    return arr
+    data = read_data()
+    all_matrices = []
+    current_matrix = []
+    for row in data:
+        current_matrix.append(row.reshape(100))
+        if len(current_matrix) == 10:
+            all_matrices.append(np.array(current_matrix))
+            current_matrix = []
+    return all_matrices
 
 
-def train_network(matrix_array):
-    # Train the network
-    W = np.zeros((N * N, N * N))
-
-    for i in range(N * N):
-        for j in range(N * N):
-            if i == j or W[i, j] != 0.0:
-                continue
-
-            w = 0.0
-
-            for n in range(nb_patterns):
-                w += matrix_array[n, i] * matrix_array[n, j]
-
-            W[i, j] = w / matrix_array.shape[0]
-            W[j, i] = W[i, j]
-    return W
+def train_network(matrix):
+    values = []
+    for i in range(100):
+        line = []
+        for j in range(100):
+            grade = 0
+            for k in range(10):
+                if matrix[k][i] == matrix[k][j]:
+                    grade += 1
+                else:
+                    grade -= 1
+            line.append(grade)
+        values.append(line)
+    return np.array(values)
 
 
-def construct(weight_matrix):
-    patterns = create()
-    S = random_line(patterns)
-    h = np.zeros((N * N))
-    # Defining Hamming Distance matrix for seeing convergence
-    hamming_distance = np.zeros((max_iterations, nb_patterns))
-    for iteration in range(max_iterations):
-        for i in range(N * N):
-            i = np.random.randint(N * N)
-            h[i] = 0
-            for j in range(N * N):
-                h[i] += weight_matrix[i, j] * S[i,j]
-            S = np.where(h < 1, 0, 1)
-        for i in range(nb_patterns):
-            hamming_distance[iteration, i] = ((patterns - S)[i] != 0).sum()
-
-        fig, ax = plt.subplots()
-        ax.matshow(S.reshape((N, N)), cmap='gray')
-    return hamming_distance
+def train_all(matrix_list):
+    trained = []
+    for matrix in matrix_list:
+        trained.append(train_network(matrix))
+    return trained
 
 
-if __name__ == '__main__':
-    each = create()
-    trained = train_network(each)
-    hamming = construct(trained)
-    print(hamming)
+def recover(matrix, trained_matrix):
+    pre_matrix = np.copy(matrix)
+    after_matrix = np.copy(matrix)
+
+    bit_order = np.arange(100)
+    np.random.shuffle(bit_order)
+    flag = True
+    while flag:
+        flag = False
+        for bit in range(100):
+            sum = 0
+            for i in range(100):
+                if i != bit_order[bit]:
+                    sum = sum + (after_matrix[i] * trained_matrix[bit_order[bit]][i])
+            memory = after_matrix[bit_order[bit]]
+            if sum >= 0:
+                after_matrix[bit_order[bit]] = 1
+            else:
+                after_matrix[bit_order[bit]] = value
+            if memory != after_matrix[bit_order[bit]]:
+                flag = True
+    show_matrix(pre_matrix)
+    show_matrix(after_matrix)
+    return after_matrix
+
+
+data = read_data()
+data_base = create()
+trained = train_all(data_base)
+scores = []
+
+for rate in range(5, 51, 5):
+    mutated_data = randomize(data[0].reshape(100), rate)
+    nums_scores = []
+    for num_lern in range(1, 11, 1):
+        t_of_all = np.zeros((100, 100))
+        for i in range(num_lern):
+            t_of_all = t_of_all + trained[i]
+        t_of_all = t_of_all / (num_lern + 1)
+
+        sum_n_avg = 0
+        for i in range(10):
+            recon_matrix = recover(mutated_data[i], t_of_all)
+            sum_n_avg = sum_n_avg + np.linalg.norm(data[0].reshape(100) - recon_matrix)
+            sum_n_avg = sum_n_avg / 10
+        nums_scores.append(sum_n_avg)
+    scores.append(nums_scores)
